@@ -84,7 +84,7 @@ while( $n -eq 1 )
 |                  Network Test Util                    |
 |                                                       |
 |                                                       |
-|      Credit Jazz Anders, programming and design       |
+|      Credit Iris Huggie, programming and design       |
 |                                                       |
 |                                                       |
 |  Network Test Utilities V0.2, Alpha proof of concept  |
