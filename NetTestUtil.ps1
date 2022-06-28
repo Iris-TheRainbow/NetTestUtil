@@ -23,22 +23,25 @@ $n = 1
 
 function CheckLAN
 {
+    $global:LAN = 0
     $RouterIP = (Get-NetRoute "0.0.0.0/0").NextHop
-    $LAN = Test-Connection $RouterIP -Quiet
+    $global:LAN = Test-Connection $RouterIP -Quiet
 }
 
 function CheckDNS
 {
+    $global:DNS = 0
     #Pseudocode for what I want
     #$DNSAdress = Find-DNSAdress
     #$DNS = Test-Connection $DNSAdress -quiet
-    $DNS = Test-Connection 1.1.1.1 -Quiet
+    $global:DNS = Test-Connection 1.1.1.1 -Quiet
     #just checks 1.1.1.1, nothing else
 }
 
 function CheckInternet
 {
-    $internet = Test-Connection www.google.com -Quiet
+    $global:internet = 0
+    $global:internet = Test-Connection www.google.com -Quiet
 }
 
 function PressEnter
@@ -84,7 +87,7 @@ while( $n -eq 1 )
 |_______________________________________________________|'
         PressEnter
         CheckInternet
-        if( $internet -ieq 'true' )
+        if( $internet -ieq 'True' )
         {
             echo 'Internet Connected'
         }
@@ -105,7 +108,7 @@ while( $n -eq 1 )
 |_______________________________________________________|'
         PressEnter
         CheckLAN
-        if( $LAN -ieq 'true' )
+        if( $LAN -ieq 'True' )
         {
             echo 'LAN Connected'
         }
@@ -126,9 +129,9 @@ while( $n -eq 1 )
 |_______________________________________________________|'
         PressEnter
         CheckDNS
-        if( $DNS -ieq 'true' )
+        if( $DNS -ieq 'True' )
         {
-            echo 'DNS conected'
+            echo 'DNS connected'
         }
         else
         {
@@ -144,6 +147,7 @@ while( $n -eq 1 )
 |                                                       |
 |                    Run all tests                      |
 |   Runs Network, DNS Server, and Local Network tests   |
+|           Also can save results to a file             |
 |                                                       |
 |_______________________________________________________|'
         PressEnter
@@ -151,31 +155,38 @@ while( $n -eq 1 )
         if( $LAN -ieq 'true' )
         {
             echo 'LAN Connected'
+            $FileLAN = 'LAN:      Passed'
         }
         else
         {
             echo 'No LAN Connection'
+            $FileLAN = 'LAN:      Failed'
         }
         PressNext
         CheckDNS
         if( $DNS -ieq 'true' )
         {
             echo 'DNS conected'
+            $FileDNS = "DNS:      Passed"
         }
         else
         {
             echo 'No DNS Concetion'
+            $FileDNS = 'DNS:      Failed'
         }
         PressNext
         CheckInternet
         if( $internet -ieq 'true' )
         {
             echo 'Internet Connected'
+            $FileInternet = 'Internet: Passed'
         }
         else
         {
             echo 'No Internet Connection'
+            $FileInternet = 'Internet: Failed'
         }
+        
         $null = read-host "Press ENTER to view results”
         echo '
  _______________________________________________________
@@ -224,7 +235,20 @@ echo '
         echo '
 |                                                       |
 |_______________________________________________________|'
-    PressReturn
+    $answer = read-host "Would you like to save resaults to a text file? (y/n)"
+    if($answer -ieq 'y')
+    {
+        $NetProfile = Get-NetConnectionProfile
+        $Name = Get-Date -Format "MM dd yyyy HHmm"
+        $NetProfile | Out-File ./$name -Encoding UTF8
+        $FileInternet | Out-File ./$name -Append -Encoding UTF8
+        $FileDNS | Out-File ./$name -Append -Encoding UTF8
+        $FileLAN | Out-File ./$name -Append -Encoding UTF8
+    }
+    else
+    {
+        PressReturn
+    }   
     }
     elseif( $input -eq 6 )
     {
@@ -237,7 +261,7 @@ echo '
 |      Credit Iris Huggie, programming and design       |
 |                                                       |
 |                                                       |
-|    Network Test Utilities V0.5, Release Canidate      |
+|    Network Test Utilities V1.0, Release Canidate      |
 |                                                       |
 |                                                       |
 |_______________________________________________________|'
@@ -381,3 +405,5 @@ echo '
     Clear-Host
 }
 echo 'Goodbye, have a nice day!'
+PressCont
+Clear-Host
