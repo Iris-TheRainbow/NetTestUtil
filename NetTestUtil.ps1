@@ -1,5 +1,4 @@
-﻿$ErrorActionPreference = 'SilentlyContinue'
-$main = "
+﻿$main = "
  _______________________________________________________
 |                                                       |
 |                  Network Test Util                    |
@@ -28,13 +27,27 @@ function CheckLAN
     $LAN = Test-Connection $RouterIP -Quiet
 }
 
+function CheckDNS
+{
+    #Pseudocode for what I want
+    #$DNSAdress = Find-DNSAdress
+    #$DNS = Test-Connection $DNSAdress -quiet
+    $DNS = Test-Connection 1.1.1.1 -Quiet
+    #just checks 1.1.1.1, nothing else
+}
+
 function CheckInternet
 {
     $internet = Test-Connection www.google.com -Quiet
 }
+
 function PressEnter
 {
     $null = read-host “Press ENTER to run test”
+}
+function PressNext
+{
+    $null = read-host “Press ENTER to run next test”
 }
 
 function PressCont
@@ -104,13 +117,114 @@ while( $n -eq 1 )
     }
     elseif( $input -eq 3 )
     {
-        echo 'Check conection to DNS server'
+        echo '
+ _______________________________________________________
+|                                                       |
+|                                                       |
+|           Check The Connection To the DNS             |
+|                                                       |
+|_______________________________________________________|'
         PressEnter
+        CheckDNS
+        if( $DNS -ieq 'true' )
+        {
+            echo 'DNS conected'
+        }
+        else
+        {
+            echo 'No DNS Concetion'
+        }
+        PressCont
     }
     elseif( $input -eq 4 )
     {
-        echo 'sucess!4'
+        echo ' 
+ _______________________________________________________
+|                                                       |
+|                                                       |
+|                    Run all tests                      |
+|   Runs Network, DNS Server, and Local Network tests   |
+|                                                       |
+|_______________________________________________________|'
         PressEnter
+        CheckLAN
+        if( $LAN -ieq 'true' )
+        {
+            echo 'LAN Connected'
+        }
+        else
+        {
+            echo 'No LAN Connection'
+        }
+        PressNext
+        CheckDNS
+        if( $DNS -ieq 'true' )
+        {
+            echo 'DNS conected'
+        }
+        else
+        {
+            echo 'No DNS Concetion'
+        }
+        PressNext
+        CheckInternet
+        if( $internet -ieq 'true' )
+        {
+            echo 'Internet Connected'
+        }
+        else
+        {
+            echo 'No Internet Connection'
+        }
+        $null = read-host "Press ENTER to view results”
+        echo '
+ _______________________________________________________
+|                                                       |
+|              Network Test Util Results                |
+|                                                       |
+|                                                       |'
+        if( $LAN -ieq 'true' )
+        {
+            echo '
+|      LAN.........................     Passed          |'
+        }
+        else
+        {
+            echo '
+|      LAN.........................     Failed          |'
+        }
+
+echo '
+|                                                       |
+|                                                       |'
+        if( $DNS -ieq 'true' )
+        {
+            echo '
+|      DNS.........................     Passed          |'
+        }
+        else
+        {
+            echo '
+|      DNS.........................     Failed          |'
+        }
+
+        echo '
+|                                                       |
+|                                                       |'
+        if( $Internet -ieq 'true' )
+        {
+            echo '
+|      Internet....................     Passed          |'
+        }
+        else
+        {
+            echo '
+|      Internet....................     Failed          |'
+        }
+        echo '
+|                                                       |
+|_______________________________________________________|'
+    PressReturn
     }
     elseif( $input -eq 6 )
     {
@@ -123,7 +237,7 @@ while( $n -eq 1 )
 |      Credit Iris Huggie, programming and design       |
 |                                                       |
 |                                                       |
-|  Network Test Utilities V0.3, Alpha proof of concept  |
+|    Network Test Utilities V0.5, Release Canidate      |
 |                                                       |
 |                                                       |
 |_______________________________________________________|'
@@ -249,22 +363,21 @@ while( $n -eq 1 )
             }
             else
             {
-                echo else
                 PressEnter2
             }
-    
+            Clear-Host
         }
         PressCont
+        Clear-Host
     }
     elseif( $input -eq 7 )
     {
         $n = 0
-        echo bye
     }
     else
     {
-        echo else
         PressEnter2
     }
     Clear-Host
 }
+echo 'Goodbye, have a nice day!'
